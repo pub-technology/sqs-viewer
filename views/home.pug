@@ -1,0 +1,51 @@
+extends layout
+
+block content
+  h1 SQS Viewer Local Development
+  p.lead This is the support tool for testing.
+  hr
+  form.form-horizontal(method='POST')
+    input(type='hidden', name='_csrf', value=_csrf)
+    .form-group.row.justify-content-md-center
+      label.col-sm-2.col-form-label.text-right.font-weight-bold(for='accessKeyId') Access Key Id
+      .col-sm-6
+        input.form-control(type='text', name='accessKeyId', id='accessKeyId', autofocus=true)
+    .form-group.row.justify-content-md-center
+      label.col-sm-2.col-form-label.text-right.font-weight-bold(for='secretAccessKey') Secret Access Key
+      .col-sm-6
+        input.form-control(type='text', name='secretAccessKey', id='secretAccessKey')
+    .form-group.row.justify-content-md-center
+      label.col-sm-2.col-form-label.text-right.font-weight-bold(for='region') Region
+      .col-sm-6
+        input.form-control(type='text', name='region', id='region', placeholder='Default is us-west-2')
+    .form-group.row.justify-content-md-center
+      label.col-sm-2.col-form-label.text-right.font-weight-bold(for='sessionToken') Session Token
+      .col-sm-6
+        input.form-control(type='text', name='sessionToken', id='sessionToken', placeholder='Optional')
+    .form-group.row.justify-content-md-center
+      label.col-sm-2.col-form-label.text-right.font-weight-bold(for='endpoint') Endpoint
+      .col-sm-6
+        input.form-control(type='text', name='endpoint', id='endpoint', placeholder='Optional Ex: with localstack http://localhost:4566')
+    .form-group.row.justify-content-md-center
+      .offset-sm-2.col-sm-6.d-flex.justify-content-end
+        button.btn.btn-primary(type='submit')
+          i.fa-solid.fa-table-list
+          | Fetch Queues
+  hr
+  if queueUrls.length > 0
+    .form-group.row.justify-content-md-center
+      .col-sm-2.col-form-label.text-right.font-weight-bold
+      .col-sm-6
+        table.table
+          thead
+            tr
+              th(scope='col') #
+              th(scope='col') Queue URL
+              th.text-right(scope='col') Detail
+          tbody
+            each value , index in queueUrls
+              tr
+                th(scope='row') #{index + 1}
+                td #{value.split('/')[value.split('/').length - 1]}
+                td.text-right
+                  a.btn.btn-secondary(href='/detail?queueName='+ value.split('/')[value.split('/').length - 1], role='button') View details »

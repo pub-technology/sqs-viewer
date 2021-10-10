@@ -1,0 +1,1 @@
+{"queueUrls":["http://localhost/000000000000/relay-safety-check-development","http://localhost/000000000000/alert-process-queue-development"],"credentials":{"accessKeyId":"test123","secretAccessKey":"test123","region":"","sessionToken":"","endpoint":"http://localhost:4566"}}

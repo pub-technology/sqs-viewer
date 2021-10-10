@@ -1,0 +1,94 @@
+extends ../layout
+
+block content
+  h2 Queue Info
+  hr
+
+  .row
+    .col-sm-12
+      .card(style='background-color: #3b5998')
+        .card-body(style='color: #fff')
+          Queue URL : #{currentQueueUrl}
+  hr
+  .card.text-center
+    .card-header
+      ul.nav.nav-tabs.card-header-tabs
+        li.nav-item
+          a.nav-link(href=url + '&action=queueAttributes', class=currentAction === "queueAttributes" && 'active') Queue Information
+        li.nav-item
+          a.nav-link(href=url + '&action=sentMessage' , class=currentAction === "sentMessage" && 'active') Sent Message
+    .card-body
+      if currentAction === "queueAttributes"
+        h5.card-title Queue Info
+        form.form-horizontal
+        //p.card-text With supporting text below as a natural lead-in to additional content.
+        //a.btn.btn-primary(href='#') Go somewhere
+        ul.list-group.col-sm-8
+          li.list-group-item.d-flex.justify-content-between.align-items-center
+            | Queue Arn
+            span.badge.badge-primary.badge-pill #{queueAttributes.QueueArn}
+          #accordion
+            .card
+              #headingOne.card-header
+                div.text-left
+                  div(data-toggle='collapse' data-target='#collapseOne' aria-expanded='true' aria-controls='collapseOne')
+                    div.d-flex.justify-content-between.align-items-center
+                      span Num of messages #In Queue
+                      span.badge.badge-primary.badge-pill #{queueAttributes.ApproximateNumberOfMessages}
+              #collapseOne.collapse(aria-labelledby='headingOne' data-parent='#accordion')
+                .card-body
+                  | The approximate number of messages available for retrieval from the queue.
+            .card
+              #heading2.card-header
+                div.text-left
+                  div(data-toggle='collapse' data-target='#collapse2' aria-expanded='true' aria-controls='collapse2')
+                    div.d-flex.justify-content-between.align-items-center
+                      span Num of messages #Delayed
+                      span.badge.badge-primary.badge-pill #{queueAttributes.ApproximateNumberOfMessagesDelayed}
+              #collapse2.collapse(aria-labelledby='heading2' data-parent='#accordion')
+                .card-body
+                  | The approximate number of messages in the queue that are delayed and not available for reading immediately. This can happen when the queue is configured as a delay queue or when a message has been sent with a delay parameter.
+            .card
+              #heading3.card-header
+                div.text-left
+                  div(data-toggle='collapse' data-target='#collapse3' aria-expanded='true' aria-controls='collapse3')
+                    div.d-flex.justify-content-between.align-items-center
+                      span Num of messages #In Flight
+                      span.badge.badge-primary.badge-pill #{queueAttributes.ApproximateNumberOfMessagesNotVisible}
+              #collapse3.collapse(aria-labelledby='heading3' data-parent='#accordion')
+                .card-body
+                  | The approximate number of messages that are in flight. Messages are considered to be in flight if they have been sent to a client but have not yet been deleted or have not yet reached the end of their visibility window.
+              form.form-horizontal(method='POST')
+                input(type='hidden', name='_csrf', value=_csrf)
+                input(type='hidden', name='purgeQueue', value="true")
+                .form-group
+                  .d-flex.justify-content-end.p-3
+                    button.btn.btn-primary(type='submit')
+                      i.fa-solid.fa-table-list
+                      | Purge Queue
+      if currentAction === "sentMessage"
+        h5.card-title Message Info
+        form.form-horizontal(method='POST')
+          input(type='hidden', name='_csrf', value=_csrf)
+          .form-group.row.justify-content-md-center
+            label.col-sm-2.col-form-label.text-right.font-weight-bold(for='messageBody') Message Body
+            .col-sm-6
+              input.form-control(type='text', name='messageBody', id='messageBody')
+          .form-group.row.justify-content-md-center
+            label.col-sm-2.col-form-label.text-right.font-weight-bold(for='delaySeconds') Delay Seconds
+            .col-sm-6
+              input.form-control(type='number', name='delaySeconds', id='delaySeconds', placeholder='Optional Field')
+          .form-group.row.justify-content-md-center
+            .offset-sm-2.col-sm-6.d-flex.justify-content-end
+              button.btn.btn-primary(type='submit')
+                i.fa-solid.fa-table-list
+                | Sent
+        h4 Your Message ( JSON Format )
+        if messageView.id
+          span Message ID: #{messageView.id}
+        if messageView.text === "Your message is an invalid JSON format"
+          .alert.alert-danger(role='alert')
+            | #{messageView.text}
+        else
+          textarea#messageVisible.form-control(rows='10', disabled="disabled")
+            | #{messageView.text}
